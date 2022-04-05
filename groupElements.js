@@ -20,25 +20,22 @@ const isEqual = function (element1, element2) {
   return element1 === element2;
 };
 
-const groupPresentAt = function (groups, element) {
+const classifyByIdentity = function (groups, element) {
   for (let index = 0; index < groups.length; index++) {
     if (isEqual(groups[index][0], element)) {
-      return index;
+      groups[index].push(element);
+      return groups;
     }
   }
-  return -1;
+  groups.push([element]);
+  return groups;
 };
 
 const groupElements = function (arr) {
-  const groups = [];
+  let groups = [];
 
   for (let index = 0; index < arr.length; index++) {
-    let position = groupPresentAt(groups, arr[index]);
-    if (position === -1) {
-      position = groups.length;
-      groups.push([]);
-    }
-    groups[position].push(arr[index]);
+    groups = classifyByIdentity(groups, arr[index]);
   }
   return groups;
 };
