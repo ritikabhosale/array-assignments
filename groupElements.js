@@ -1,72 +1,43 @@
 const areArraysEqual = function (arr1, arr2) {
   if (arr1.length !== arr2.length) { return false; }
 
-  if (arr1.length === 0 && arr2.length === 0) { return true; }
-
-  let areCurrentElementsEqual = arr1[0] === arr2[0];
-
-  if (Array.isArray(arr1[0])) {
-    areCurrentElementsEqual = areArraysEqual(arr1[0], arr2[0]);
-  }
-  return areCurrentElementsEqual && areArraysEqual(arr1.slice(1), arr2.slice(1));
-};
-
-const isArrayPresent = function (arr, list) {
-  for (let index = 0; index < list.length; index++) {
-    if (Array.isArray(list[index])) {
-      if (areArraysEqual(arr, list[index])) { return true; }
+  for (let index = 0; index < arr1.length; index++) {
+    if (!isEqual(arr1[index], arr2[index])) {
+      return false;
     }
   }
-  return false;
+  return true;
 };
 
-const isPresent = function (element, list) {
-  if (Array.isArray(element)) {
-    return isArrayPresent(element, list);
+const areBothArrays = function (element1, element2) {
+  return Array.isArray(element1) && Array.isArray(element2);
+};
+
+const isEqual = function (element1, element2) {
+  if (areBothArrays(element1, element2)) {
+    return areArraysEqual(element1, element2);
   }
-  return list.includes(element);
+  return element1 === element2;
 };
 
-const arrayPresentAt = function (arr, list) {
-  for (let index = 0; index < list.length; index++) {
-    if (Array.isArray(list[index])) {
-      if (areArraysEqual(arr, list[index])) { return index; }
+const groupPresentAt = function (groups, element) {
+  for (let index = 0; index < groups.length; index++) {
+    if (isEqual(groups[index][0], element)) {
+      return index;
     }
   }
   return -1;
 };
 
-const presentAt = function (element, list) {
-  if (Array.isArray(element)) {
-    return arrayPresentAt(element, list);
-  }
-  return list.indexOf(element);
-};
-
-const unique = function (arr) {
-  const uniqueElements = [];
-  for (let index = 0; index < arr.length; index++) {
-    if (!isPresent(arr[index], uniqueElements)) {
-      uniqueElements.push(arr[index]);
-    }
-  }
-  return uniqueElements;
-};
-
-const createEmptyArrays = function (count) {
-  const emptyArrays = [];
-  for (let index = 0; index < count; index++) {
-    emptyArrays.push([]);
-  }
-  return emptyArrays;
-};
-
 const groupElements = function (arr) {
-  const uniqueElements = unique(arr);
-  const groups = createEmptyArrays(uniqueElements.length);
+  const groups = [];
 
   for (let index = 0; index < arr.length; index++) {
-    const position = presentAt(arr[index], uniqueElements);
+    let position = groupPresentAt(groups, arr[index]);
+    if (position === -1) {
+      position = groups.length;
+      groups.push([]);
+    }
     groups[position].push(arr[index]);
   }
   return groups;
